@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Yash Music</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Create Account</h1>
+        <form id="signupForm" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" required minlength="6">
+            </div>
+            <button type="submit" class="auth-btn">Sign Up</button>
+            <p class="auth-link">Already have an account? <a href="/login.html">Login</a></p>
+        </form>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { auth } from '/firebase-config.js';
+        
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            if (email === 'admin@yash.com') {
+                errorMessage.textContent = 'This email is reserved for admin use';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Save user data
+                const userData = {
+                    email: user.email,
+                    role: 'user',
+                    uid: user.uid
+                };
+                
+                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('token', await user.getIdToken());
+                
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Signup error:', error);
+                errorMessage.textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html> 

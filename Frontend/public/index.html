@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yash Music</title>
+    <link rel="stylesheet" href="/styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+    <script type="module" src="/firebase-config.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .song-card {
+            position: relative;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .song-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: red;
+        }
+
+        .page-transition {
+            display: none;
+        }
+
+        .song-card {
+            transition: transform 0.15s ease;
+        }
+
+        .song-card:hover {
+            transform: scale(1.01);
+        }
+
+        /* Remove loading spinner */
+        .loading-spinner {
+            display: none;
+        }
+
+        /* Add smooth transitions to all elements */
+        * {
+            transition: all 0.2s ease;
+        }
+
+        .song-card {
+            transform: scale(1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .song-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-transition">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="nav-bar">
+        <h1>Yash Music</h1>
+        <button onclick="handleLogout()" id="logoutButton" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Header with logout -->
+        <div class="header">
+            <div class="logo">
+                <h1>YASH Music</h1>
+            </div>
+            <div class="user-controls">
+                <span id="username-display">Hello, Guest!</span>
+                <button id="logout-btn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Just add this div right after your existing navbar/header, before the songs container -->
+        <div class="user-controls">
+            <span id="username-display"></span>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- Add this right after the nav-bar div -->
+        <div id="admin-controls" class="admin-controls" style="display: none;">
+            <button id="uploadSongBtn" class="upload-btn">
+                <i class="fas fa-upload"></i> Upload New Song
+            </button>
+        </div>
+
+        <!-- Songs container -->
+        <div id="songs-container" class="songs-grid"></div>
+    </div>
+
+    <!-- Add this mini player -->
+    <div id="mini-player" class="mini-player" style="display: none;">
+        <div class="mini-player-left">
+            <img id="mini-cover" src="" alt="Cover">
+            <div class="mini-song-info">
+                <span id="mini-title">No song playing</span>
+                <span id="mini-artist">YASH Music</span>
+            </div>
+        </div>
+        <div class="mini-player-controls">
+            <button onclick="previousSong()" class="mini-control-btn">
+                <i class="fas fa-step-backward"></i>
+            </button>
+            <button onclick="togglePlay()" id="mini-play-btn" class="mini-control-btn">
+                <i class="fas fa-play"></i>
+            </button>
+            <button onclick="nextSong()" class="mini-control-btn">
+                <i class="fas fa-step-forward"></i>
+            </button>
+        </div>
+        <div class="mini-player-right">
+            <button onclick="expandPlayer()" class="mini-expand-btn">
+                <i class="fas fa-expand"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Add this modal at the end of body but before scripts -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Upload New Song</h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="songTitle">Song Title:</label>
+                    <input type="text" id="songTitle" placeholder="Enter song title" required>
+                </div>
+                <div class="form-group">
+                    <label for="songFile">Choose Song (MP3):</label>
+                    <input type="file" id="songFile" accept="audio/mp3" required>
+                    <div id="songFileDetails" class="file-details"></div>
+                </div>
+                <div class="form-group">
+                    <label for="coverImage">Choose Cover Image:</label>
+                    <input type="file" id="coverImage" accept="image/*" required>
+                    <div id="coverFileDetails" class="file-details"></div>
+                </div>
+                <button type="submit" class="upload-submit-btn">Upload Song</button>
+            </form>
+            <div id="uploadProgress" class="progress-bar" style="display: none;">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Yash Music</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Login to Yash Music</h1>
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="auth-btn">Login</button>
+            <p class="auth-link">New user? <a href="/signup.html">Sign Up</a></p>
+        </form>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { auth } from '/firebase-config.js';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            try {
+                // Check for admin login
+                if (email === 'admin@yash.com' && password === 'admin123') {
+                    const userData = {
+                        email: 'admin@yash.com',
+                        role: 'admin'
+                    };
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    window.location.href = '/';
+                    return;
+                }
+
+                // Regular user login with Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Save user data
+                const userData = {
+                    email: user.email,
+                    role: 'user',
+                    uid: user.uid
+                };
+                
+                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('token', await user.getIdToken());
+                
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'Invalid email or password';
+            }
+        });
+    </script>
+</body>
+</html> 

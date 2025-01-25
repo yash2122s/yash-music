@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Upload Songs</title>
+    <style>
+        .upload-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .upload-zone {
+            border: 2px dashed #1DB954;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .progress-bar {
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .progress {
+            height: 100%;
+            background: #1DB954;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .file-list {
+            margin: 20px 0;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h2>Upload Songs</h2>
+        <div id="uploadZone" class="upload-zone">
+            <p>Drag & Drop MP3 files here or click to select</p>
+            <input type="file" id="fileInput" multiple accept=".mp3" style="display: none;">
+        </div>
+        <div class="cover-upload">
+            <p>Select cover images for songs</p>
+            <input type="file" id="coverInput" multiple accept="image/*">
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="uploadProgress"></div>
+        </div>
+        <div class="file-list" id="fileList"></div>
+    </div>
+
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
